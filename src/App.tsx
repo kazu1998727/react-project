@@ -20,7 +20,51 @@ type Page = {
 };
 
 const pages: Record<string, Page> = {
-  overview: {
+  "1": {
+    title: "Overview",
+    subtitle: "A foundation for modern web applications, built with intention.",
+    group: "Getting Started",
+    cards: [
+      {
+        tag: "Introduction",
+        heading: "What is this?",
+        body: "A comprehensive framework designed for teams who care deeply about the craft of software. Built with intention, refined through use.",
+      },
+      {
+        tag: "Philosophy",
+        heading: "Core Philosophy",
+        body: "Every decision has a reason. We favor explicit over implicit, composition over inheritance, and clarity over cleverness. The best code is the code that speaks for itself.",
+      },
+      {
+        tag: "Audience",
+        heading: "Who is it for?",
+        body: "Teams building production applications who value long-term maintainability. If you've ever inherited a codebase and wished it was cleaner — this is for you.",
+      },
+    ],
+  },
+  "2": {
+    title: "Overview",
+    subtitle: "A foundation for modern web applications, built with intention.",
+    group: "Getting Started",
+    cards: [
+      {
+        tag: "Introduction",
+        heading: "What is this?",
+        body: "A comprehensive framework designed for teams who care deeply about the craft of software. Built with intention, refined through use.",
+      },
+      {
+        tag: "Philosophy",
+        heading: "Core Philosophy",
+        body: "Every decision has a reason. We favor explicit over implicit, composition over inheritance, and clarity over cleverness. The best code is the code that speaks for itself.",
+      },
+      {
+        tag: "Audience",
+        heading: "Who is it for?",
+        body: "Teams building production applications who value long-term maintainability. If you've ever inherited a codebase and wished it was cleaner — this is for you.",
+      },
+    ],
+  },
+  "3": {
     title: "Overview",
     subtitle: "A foundation for modern web applications, built with intention.",
     group: "Getting Started",
