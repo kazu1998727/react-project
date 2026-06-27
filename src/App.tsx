@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import Sidebar from "./components/layout/Sidebar";
+import Button from "./components/ui/Button";
 
 const navGroups = [
   {
@@ -14,77 +15,21 @@ const navGroups = [
 
 type Page = {
   title: string;
-  subtitle: string;
-  group: string;
-  cards: { tag: string; heading: string; body: string }[];
+  body: string;
 };
 
 const pages: Record<string, Page> = {
   "1": {
-    title: "Overview",
-    subtitle: "A foundation for modern web applications, built with intention.",
-    group: "Getting Started",
-    cards: [
-      {
-        tag: "Introduction",
-        heading: "What is this?",
-        body: "A comprehensive framework designed for teams who care deeply about the craft of software. Built with intention, refined through use.",
-      },
-      {
-        tag: "Philosophy",
-        heading: "Core Philosophy",
-        body: "Every decision has a reason. We favor explicit over implicit, composition over inheritance, and clarity over cleverness. The best code is the code that speaks for itself.",
-      },
-      {
-        tag: "Audience",
-        heading: "Who is it for?",
-        body: "Teams building production applications who value long-term maintainability. If you've ever inherited a codebase and wished it was cleaner — this is for you.",
-      },
-    ],
+    title: "こころ",
+    body: "親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。\n\n別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。\nと囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。",
   },
   "2": {
-    title: "Overview",
-    subtitle: "A foundation for modern web applications, built with intention.",
-    group: "Getting Started",
-    cards: [
-      {
-        tag: "Introduction",
-        heading: "What is this?",
-        body: "A comprehensive framework designed for teams who care deeply about the craft of software. Built with intention, refined through use.",
-      },
-      {
-        tag: "Philosophy",
-        heading: "Core Philosophy",
-        body: "Every decision has a reason. We favor explicit over implicit, composition over inheritance, and clarity over cleverness. The best code is the code that speaks for itself.",
-      },
-      {
-        tag: "Audience",
-        heading: "Who is it for?",
-        body: "Teams building production applications who value long-term maintainability. If you've ever inherited a codebase and wished it was cleaner — this is for you.",
-      },
-    ],
+    title: "吾輩は猫である",
+    body: "親譲りの無鉄砲で小供の時から損ばかりしている。\n小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。\n\n新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。",
   },
   "3": {
-    title: "Overview",
-    subtitle: "A foundation for modern web applications, built with intention.",
-    group: "Getting Started",
-    cards: [
-      {
-        tag: "Introduction",
-        heading: "What is this?",
-        body: "A comprehensive framework designed for teams who care deeply about the craft of software. Built with intention, refined through use.",
-      },
-      {
-        tag: "Philosophy",
-        heading: "Core Philosophy",
-        body: "Every decision has a reason. We favor explicit over implicit, composition over inheritance, and clarity over cleverness. The best code is the code that speaks for itself.",
-      },
-      {
-        tag: "Audience",
-        heading: "Who is it for?",
-        body: "Teams building production applications who value long-term maintainability. If you've ever inherited a codebase and wished it was cleaner — this is for you.",
-      },
-    ],
+    title: "坊ちゃん",
+    body: "親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。\n別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。\n\nと囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。\nなぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。",
   },
 };
 
@@ -101,7 +46,7 @@ export default function App() {
   const page = getPage(activeId);
 
   return (
-    <div className="flex w-full min-h-screen">
+    <div className="flex w-full h-screen overflow-hidden">
       <Sidebar
         navGroups={navGroups}
         activeId={activeId}
@@ -109,84 +54,30 @@ export default function App() {
       />
 
       {/* ── Main content ── */}
-      <main className="flex-1 flex flex-col min-h-screen overflow-y-auto">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden px-10">
         {/* Article */}
-        <article className="w-full max-w-3xl mx-auto px-12 py-16 box-border">
+        <article className="flex-1 min-h-0 flex flex-col gap-5 w-full p-[30px] box-border bg-(--text-active-bg) rounded-2xl mt-[30px] overflow-hidden">
           {/* Page title */}
-          <div
-            className="mb-14 pb-10"
-            style={{ borderBottom: "1px solid var(--border)" }}
-          >
-            <h1
-              className="m-0 mb-3 leading-tight"
-              style={{
-                fontFamily: "var(--heading)",
-                fontSize: "clamp(36px, 5vw, 52px)",
-                fontWeight: 400,
-                color: "var(--text-h)",
-                letterSpacing: "-1.2px",
-              }}
-            >
-              {page.title}
-            </h1>
+          <div className="flex shrink-0 items-center justify-between gap-5 ml-[30px]">
+            <h1 className="text-heading shrink-0">{page.title}</h1>
+            <Button icon="edit" label="Edit" size="m" />
           </div>
-
           {/* Content cards */}
-          <div className="flex flex-col gap-5">
-            {page.cards.map((card, i) => (
-              <div
-                key={`${activeId}-${i}`}
-                className="card-animate rounded-xl p-7 transition-all duration-200 cursor-default"
-                style={{
-                  border: "1px solid var(--border)",
-                  background: "var(--bg)",
-                  animationDelay: `${i * 0.07}s`,
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor =
-                    "var(--accent-border)";
-                  (e.currentTarget as HTMLElement).style.boxShadow =
-                    "0 0 0 3px var(--accent-bg)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor =
-                    "var(--border)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "none";
-                }}
-              >
-                <div
-                  className="text-xs font-medium uppercase mb-2.5"
-                  style={{
-                    letterSpacing: "1.4px",
-                    color: "var(--accent)",
-                    fontFamily: "var(--mono)",
-                  }}
-                >
-                  {card.tag}
-                </div>
-                <h2
-                  className="m-0 mb-3"
-                  style={{
-                    fontFamily: "var(--heading)",
-                    fontSize: "22px",
-                    fontWeight: 400,
-                    color: "var(--text-h)",
-                    letterSpacing: "-0.3px",
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {card.heading}
-                </h2>
-                <p
-                  className="m-0 text-sm"
-                  style={{ color: "var(--text)", lineHeight: 1.75 }}
-                >
-                  {card.body}
+          <div className="flex flex-1 min-h-0 items-start justify-between gap-5 overflow-hidden">
+            <div className="flex-1 flex flex-col min-h-0 gap-5 overflow-hidden h-full">
+              <div className="card-animate flex-1 min-h-0 rounded-[8px] p-[30px] transition-all duration-200 cursor-default bg-white overflow-y-auto">
+                <p className="m-0 text-body leading-normal whitespace-pre-line ">
+                  {page.body}
                 </p>
               </div>
-            ))}
+            </div>
+            <Button icon="edit" label="Edit" size="m" />
           </div>
         </article>
+        <div className="flex items-center justify-between gap-5 leading-[60px] h-[60px]">
+          <p className="text-caption">Copyright © 2021 Sample</p>
+          <p className="text-caption">運営会社</p>
+        </div>
       </main>
     </div>
   );
