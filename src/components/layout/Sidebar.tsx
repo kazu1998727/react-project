@@ -1,5 +1,6 @@
-import logo from "../assets/img/icon/logo.svg";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
+import Button from "../ui/Button";
+import Icon from "../ui/Icon";
 
 type NavItem = {
   id: string;
@@ -28,7 +29,7 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
       {/* Brand */}
       <div className="flex items-center justify-between px-10 pb-5 pt-[30px]">
         <div className="flex items-center gap-2">
-          <img src={logo} alt="logo" className="w-8 h-8" />
+          <Icon name="logo" size={32} />
           <span className="text-heading leading-none">ServiceName</span>
         </div>
       </div>
@@ -47,7 +48,7 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
                       className={cn(
                         "nav-active-bar w-full flex items-center gap-2.5 pl-2 pr-[10px] text-base text-left leading-[44px] transition-all duration-150 relative cursor-pointer border-0",
                         isActive &&
-                          "text-[var(--text-active-color)] bg-[var(--text-active-bg)] font-bold rounded-[4px]",
+                          "text-(--text-active-color) bg-(--text-active-bg) font-bold rounded-[4px]",
                       )}
                     >
                       <span>{item.label}</span>
@@ -61,38 +62,8 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
       </nav>
 
       {/* User */}
-      <div className="p-3" style={{ borderTop: "1px solid var(--border)" }}>
-        <div
-          className="flex items-center gap-2.5 p-2 rounded-lg cursor-pointer transition-all duration-150"
-          onMouseEnter={(e) =>
-            ((e.currentTarget as HTMLElement).style.background =
-              "var(--code-bg)")
-          }
-          onMouseLeave={(e) =>
-            ((e.currentTarget as HTMLElement).style.background = "transparent")
-          }
-        >
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
-            style={{ background: "var(--accent)" }}
-          >
-            K
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <span
-              className="text-sm font-medium leading-none"
-              style={{ color: "var(--text-h)" }}
-            >
-              Kazuma
-            </span>
-            <span
-              className="text-xs leading-none"
-              style={{ color: "var(--text)", opacity: 0.65 }}
-            >
-              Developer
-            </span>
-          </div>
-        </div>
+      <div className="p-[10px] bg-(--text-active-bg) flex justify-end">
+        <Button icon="edit" label="Edit" size="m" />
       </div>
     </aside>
   );
