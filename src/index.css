@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+:root {
+  --text: #333;
+  --text-active-color: #32a8f8;
+  --text-active-bg: #f5f8fa;
+
+  --bg: #fff;
+  --border: #f6f8fa;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  letter-spacing: 0.1px;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: left;
+  border-inline: none;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+@theme inline {
+  --font-heading: "Noto Sans JP", sans-serif;
+  --font-sans: "Noto Sans JP", sans-serif;
+  --font-mono: "Noto Sans JP", ui-monospace, monospace;
+  --color-accent: var(--accent);
+  --color-accent-bg: var(--accent-bg);
+  --color-accent-border: var(--accent-border);
+  --color-surface: var(--bg);
+  --color-border-base: var(--border);
+  --color-text-base: var(--text);
+  --color-text-h: var(--text-h);
+  --color-code-bg: var(--code-bg);
+
+  --text-heading: 24px;
+  --text-heading--line-height: 40px;
+  --text-heading--font-weight: 700;
+
+  --text-body: 16px;
+  --text-body--line-height: 40px;
+  --text-body--font-weight: 400;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 40px;
+  --text-caption--font-weight: 400;
+
+  --text-label: 10px;
+  --text-label--line-height: 40px;
+  --text-label--font-weight: 400;
+}
