@@ -210,7 +210,23 @@ toast({ message: "最後のページは削除できません", type: "error" });
 
 - **React Compiler** を Babel プラグイン経由で有効化（`vite.config.ts`）。自動メモ化により手動の `useMemo`/`useCallback` を最小化できる。開発・ビルドのパフォーマンスには影響する点に留意。
 - **Tailwind CSS v4** は `@tailwindcss/vite` プラグインで統合。テーマ変数は `src/index.css` の `@theme inline` と CSS 変数で定義。
-- フォントは `index.html` で Google Fonts（Noto Sans JP）を読み込み。
+- **フォント**は `@fontsource-variable/noto-sans-jp`（Fontsource）を採用。`src/main.tsx` でインポートし、Vite がビルド時にバンドルへ含める。`src/index.css` のフォントファミリーは `"Noto Sans JP Variable"` を指定。
+
+#### Fontsource（ローカルバンドル）を選んだ理由
+
+当初は Google Fonts CDN から `Noto Sans JP` を読み込む構成だった。以下のトレードオフを比較し Fontsource の Variable Font 版に切り替えた。
+
+| 観点 | Google Fonts CDN | Fontsource（採用） |
+| --- | --- | --- |
+| 外部通信 | DNS / TCP / TLS ラウンドトリップが発生 | なし（ローカルバンドル） |
+| オフライン動作 | 不可 | 可 |
+| プライバシー | リクエストが Google に送られる | なし |
+| ブラウザキャッシュ共有 | 他サイトと共有できた（旧来の利点） | なし（現代ブラウザはパーティションキャッシュのため実質差なし） |
+| フォントの重さ | 動的サブセット（Google 側で最適化） | CSS `unicode-range` でブラウザが必要ブロックのみ取得 |
+| バンドルサイズ | 増えない | 増えるが unicode-range により初回ロード量は抑制される |
+| Variable Font | 非対応（weight ごとに別ファイル） | 対応（1 ファイルで全 weight をカバー） |
+
+Noto Sans JP は CJK グリフを含むため全量は大きいが、Variable Font + unicode-range の組み合わせにより実際にダウンロードされる量は限定的。外部 CDN への依存をなくしオフライン環境やイントラネットでも動作させる利点が上回ると判断した。
 
 ### 3-3. テスト
 
