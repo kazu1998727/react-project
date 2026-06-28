@@ -22,9 +22,12 @@ const sizeStyles: Record<Size, { button: string }> = {
 };
 
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-[#4CB3F8] text-white hover:opacity-85",
-  secondary: "bg-white text-[#4CB3F8] border border-[#4CB3F8] hover:opacity-85",
-  muted: "bg-[#B3B3B3] text-white hover:opacity-85",
+  primary:
+    "bg-[#4CB3F8] text-white hover:bg-[#3C8EC4] active:bg-[#347CAB] disabled:bg-[#4CB3F8]",
+  secondary:
+    "bg-white text-[#4CB3F8] border border-[#4CB3F8] hover:bg-[#CCCCCC] active:bg-[#B3B3B3] disabled:opacity-40",
+  muted:
+    "bg-[#B3B3B3] text-white hover:bg-[#999999] active:bg-[#808080] disabled:bg-[#B3B3B3]",
 };
 
 export default function Button({

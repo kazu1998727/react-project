@@ -77,16 +77,15 @@ export default function Sidebar({
                         {item.label}
                       </span>
                       {isEditMode && (
-                        <span
-                          role="button"
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             onDelete(item.id);
                           }}
-                          className="flex items-center opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
+                          className="flex items-center hover:bg-[#E6E6E6] active:bg-[#CCCCCC] disabled:opacity-40 transition-opacity cursor-pointer rounded-sm p-1"
                         >
                           <Icon name="delete" size={20} />
-                        </span>
+                        </button>
                       )}
                     </button>
                   </li>
