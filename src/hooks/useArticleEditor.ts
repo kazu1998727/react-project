@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod/v4";
 import { contentSchema, type ContentFormErrors } from "../schemas/content";
 
@@ -34,28 +34,25 @@ export function useArticleEditor(
     onBeforeSwitchFieldRef.current = options?.onBeforeSwitchField;
   });
 
-  const startEdit = useCallback(
-    (field: Exclude<EditingField, null>) => {
-      const doSwitch = () => {
-        setDraft({ title, body });
-        setEditingField(field);
-        onEditStartRef.current?.();
-      };
-      if (editingField !== null) {
-        const dirty = draft.title !== title || draft.body !== body;
-        if (dirty) {
-          if (onBeforeSwitchFieldRef.current) {
-            onBeforeSwitchFieldRef.current(doSwitch);
-          } else {
-            doSwitch();
-          }
-          return;
+  const startEdit = (field: Exclude<EditingField, null>) => {
+    const doSwitch = () => {
+      setDraft({ title, body });
+      setEditingField(field);
+      onEditStartRef.current?.();
+    };
+    if (editingField !== null) {
+      const dirty = draft.title !== title || draft.body !== body;
+      if (dirty) {
+        if (onBeforeSwitchFieldRef.current) {
+          onBeforeSwitchFieldRef.current(doSwitch);
+        } else {
+          doSwitch();
         }
+        return;
       }
-      doSwitch();
-    },
-    [title, body, editingField, draft.title, draft.body],
-  );
+    }
+    doSwitch();
+  };
 
   const updateDraft = (field: Exclude<EditingField, null>, value: string) => {
     setDraft((prev) => ({ ...prev, [field]: value }));
@@ -81,12 +78,12 @@ export function useArticleEditor(
     onEditEndRef.current?.();
   };
 
-  const cancel = useCallback(() => {
+  const cancel = () => {
     setDraft({ title, body });
     setErrors({});
     setEditingField(null);
     onEditEndRef.current?.();
-  }, [title, body]);
+  };
 
   const isDirty = draft.title !== title || draft.body !== body;
 
