@@ -1,75 +1,219 @@
-# React + TypeScript + Vite
+# Nucleus Docs (front-project)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+サイドバーでページを切り替えながら、タイトル・本文をインライン編集できるドキュメント管理 SPA です。
+ページの一覧表示・作成・編集・削除（CRUD）を行い、未保存の変更がある状態での画面遷移を確認モーダルで保護します。
 
-Currently, two official plugins are available:
+- **フレームワーク**: React 19 + TypeScript（React Compiler 有効）
+- **ビルド/開発**: Vite 8
+- **サーバー状態管理**: TanStack Query (React Query) v5
+- **スタイリング**: Tailwind CSS v4
+- **テスト**: Vitest + Testing Library
+- **パッケージマネージャ**: pnpm
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 1. 実行環境構築に必要な文書
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### 1-1. 前提ソフトウェア
 
-Note: This will impact Vite dev & build performances.
+| ツール | バージョン | 備考 |
+| --- | --- | --- |
+| Node.js | 24.11.1 | `package.json` の依存（Vite 8 / TS 6）に合わせた新しめのランタイムが必要 |
+| pnpm | 11.6.0 | `pnpm-lock.yaml` を採用。npm / yarn では未検証 |
 
-## Expanding the ESLint configuration
+バージョンは `mise.toml`（Node / pnpm）と `package.json` の `engines` / `packageManager` で固定しています。
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+#### mise を使う場合（推奨）
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+[mise](https://mise.jdx.dev/) を導入済みなら、プロジェクトルートで以下を実行するだけで `mise.toml` に記載のバージョンが揃います。
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+mise install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+#### mise を使わない場合
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+Node 24 系を手動で用意し、pnpm は Corepack で有効化できます。
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+corepack enable
+corepack prepare pnpm@11.6.0 --activate
 ```
+
+### 1-2. 依存パッケージのインストール
+
+```bash
+pnpm install
+```
+
+インストール時に `prepare` スクリプトで Husky（Git フック）がセットアップされます。
+
+### 1-3. 環境変数の設定
+
+API のベース URL を環境変数で渡します。ハードコードは禁止で、`src/apis/client.ts` が `VITE_API_BASE_URL` を参照します。
+実際の値を持つ `.env.local` は `.gitignore`（`*.local`）で除外されるため、コミット済みの `.env.example` をコピーして作成してください。
+
+```bash
+cp .env.example .env.local
+```
+
+```bash
+# .env.local
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+### 1-4. バックエンド API
+
+本リポジトリはフロントエンドのみです。`VITE_API_BASE_URL` で指定した先に、以下の REST エンドポイントを提供する API サーバーが別途必要です。
+
+| メソッド | パス | 用途 |
+| --- | --- | --- |
+| `GET` | `/content` | ページ一覧の取得 |
+| `GET` | `/content/:id` | 単一ページの取得 |
+| `POST` | `/content` | ページ作成 |
+| `PUT` | `/content/:id` | ページ更新 |
+| `DELETE` | `/content/:id` | ページ削除 |
+
+レスポンスのデータ構造（`src/apis/content.ts`）:
+
+```ts
+type Content = {
+  id: string;
+  title: string;
+  body: string;
+};
+```
+
+### 1-5. 開発サーバーの起動
+
+```bash
+pnpm dev
+```
+
+Vite が起動し、表示された URL（デフォルト `http://localhost:5173`）でアクセスできます。
+
+### 1-6. 主要コマンド一覧
+
+| コマンド | 内容 |
+| --- | --- |
+| `pnpm dev` | 開発サーバー起動（HMR 有効） |
+| `pnpm build` | 型チェック（`tsc -b`）＋本番ビルド |
+| `pnpm preview` | ビルド成果物のローカルプレビュー |
+| `pnpm lint` | ESLint 実行 |
+| `pnpm format` | Prettier で整形 |
+| `pnpm format:check` | 整形チェック（変更なし確認） |
+| `pnpm test` | Vitest（ウォッチモード） |
+| `pnpm test:run` | Vitest を 1 回実行 |
+| `pnpm test:ui` | Vitest UI |
+| `pnpm coverage` | カバレッジ計測 |
+
+---
+
+## 2. 設計・実装のために作成した中間文書
+
+### 2-1. ディレクトリ構成
+
+```
+src/
+├── apis/                  API クライアント層
+│   ├── client.ts          fetch ラッパー（共通ヘッダ・エラー処理・204対応）
+│   └── content.ts         /content エンドポイント定義と型
+├── components/
+│   ├── content/           記事編集系
+│   │   ├── ArticlePanel.tsx   タイトル/本文の編集パネル
+│   │   ├── EditableTitle.tsx
+│   │   └── EditableBody.tsx
+│   ├── layout/            レイアウト
+│   │   ├── Sidebar.tsx        ページ一覧・編集モード・追加/削除ボタン
+│   │   ├── MainContent.tsx    コンテンツ表示・空状態
+│   │   └── Footer.tsx
+│   └── ui/                汎用UI
+│       ├── Button.tsx / Icon.tsx / Input.tsx / TextArea.tsx
+│       ├── Modal.tsx          createPortal によるモーダル土台
+│       ├── Toast.tsx          トースト表示リスト
+│       └── ConfirmDialog.tsx  確認ダイアログ（モーダル中身として使用）
+├── hooks/                 ロジック層（カスタムフック）
+│   ├── useContent.ts          React Query による CRUD フック群
+│   ├── usePageNavigation.ts   ページ選択・編集状態・遷移ガードの統括
+│   ├── useArticleEditor.ts    タイトル/本文の編集状態・差分(isDirty)管理
+│   ├── useModal.ts            ModalContext を参照する consumer フック
+│   └── useToast.ts            ToastContext を参照する consumer フック
+├── providers/             グローバル状態の Provider
+│   ├── modalContext.ts        Context 定義のみ（型・createContext）
+│   ├── ModalProvider.tsx      Provider 実体（モーダル描画）
+│   ├── toastContext.ts        Context 定義のみ
+│   └── ToastProvider.tsx      Provider 実体（トースト描画）
+├── lib/utils.ts           cn()（clsx + tailwind-merge）
+├── App.tsx                画面全体の組み立て・ハンドラ定義
+└── main.tsx               エントリ。Provider のネスト構成
+```
+
+### 2-2. レイヤー設計の方針
+
+- **API 層 / ロジック層 / 表示層を分離**。コンポーネントは表示に専念し、データ取得・更新は `hooks/` に集約する。
+- **サーバー状態は React Query で一元管理**。`useContent.ts` がクエリキー `["content"]` を単一の信頼できる情報源とし、変更系（作成・更新・削除）の成功時に `invalidateQueries` でキャッシュを無効化して再取得する。
+- **クライアント状態（編集中フラグ・選択中ページ等）はカスタムフックに閉じ込める**。`usePageNavigation` と `useArticleEditor` が責務を分担する。
+
+### 2-3. グローバル UI（モーダル / トースト）の設計
+
+モーダルとトーストはアプリのどこからでも呼び出せるよう Context で全体管理する。
+React Fast Refresh の制約（`react-refresh/only-export-components`：同一ファイルでコンポーネントと非コンポーネントを混在 export しない）を満たすため、**3 ファイルに分割**している。
+
+| ファイル | 役割 |
+| --- | --- |
+| `providers/modalContext.ts` | `createContext` と型定義のみ |
+| `providers/ModalProvider.tsx` | Provider 本体。状態を持ち、実際の `<Modal>` を描画 |
+| `hooks/useModal.ts` | `useContext` で値を取り出す consumer フック（Provider 外利用時は例外） |
+
+トーストも同じ `*Context.ts` / `*Provider.tsx` / `use*.ts` の 3 分割パターンを踏襲。
+`main.tsx` で `QueryClientProvider > ModalProvider > ToastProvider > App` の順にネストしている。
+
+利用例:
+
+```tsx
+const { open, close } = useModal();
+const { toast } = useToast();
+
+open({ title: "確認", content: <ConfirmDialog ... /> });
+toast({ message: "最後のページは削除できません", type: "error" });
+```
+
+### 2-4. 編集フローと未保存ガード
+
+編集体験の中核となる仕様。
+
+- `useArticleEditor` がタイトル・本文の下書き（draft）を保持し、保存元の値との差分から `isDirty` を算出する。
+- **別ページへの遷移／サイドバー編集モード切替／タイトル↔本文の編集切替**のいずれでも、`isDirty` が真なら確認モーダルを表示する。
+  - 「保存しないで続ける」→ 変更を破棄して遷移
+  - 「キャンセル」→ 編集を継続
+- 遷移可否の判断は `usePageNavigation` に渡す `onBeforeLeaveEdit(proceed)` と、`useArticleEditor` の `onBeforeSwitchField(proceed)` に集約。実際の遷移処理を `proceed` コールバックとして受け渡すことで、ガードロジックと遷移処理を疎結合に保つ。
+- 編集中フラグは `isDirtyRef`（`RefObject<boolean>`）で親（`App.tsx`）へ伝搬し、レンダリングを増やさずに最新の dirty 状態を参照できるようにしている。
+
+### 2-5. ページ作成・削除と空状態
+
+- **新規作成**: `POST /content` 成功後、返却された `id` へ自動遷移（`useCreateContent` の `onSuccess`）。
+- **削除**: 確認モーダルで承認後に `DELETE`。**最後の 1 ページは削除不可**とし、画面が空になるのを防ぐためトーストで通知する。
+- **空状態**: ページが 0 件でもレイアウトは維持し、コンテンツ領域に「ページがありません」と作成ボタンを表示する。
+
+---
+
+## 3. その他の説明文書
+
+### 3-1. コード品質・自動化
+
+- **TypeScript strict** に加え `noUncheckedIndexedAccess` / `noUnusedLocals` / `noUnusedParameters` 等を有効化（`tsconfig.app.json`）。
+- **ESLint**（`eslint.config.js`）: JS 推奨 + typescript-eslint + react-hooks + react-refresh。
+- **Prettier**（`.prettierrc`）: セミコロンあり・ダブルクォート・末尾カンマ all・印字幅 80。
+- **Husky + lint-staged**: コミット時に `pre-commit` フックで `lint-staged` を実行し、ステージされた `*.{ts,tsx}` に Prettier + ESLint --fix、`*.css` に Prettier を自動適用。
+
+### 3-2. ビルド設定の補足
+
+- **React Compiler** を Babel プラグイン経由で有効化（`vite.config.ts`）。自動メモ化により手動の `useMemo`/`useCallback` を最小化できる。開発・ビルドのパフォーマンスには影響する点に留意。
+- **Tailwind CSS v4** は `@tailwindcss/vite` プラグインで統合。テーマ変数は `src/index.css` の `@theme inline` と CSS 変数で定義。
+- フォントは `index.html` で Google Fonts（Noto Sans JP）を読み込み。
+
+### 3-3. テスト
+
+- Vitest を `jsdom` 環境で実行（`vite.config.ts` の `test` 設定）。
+- グローバル API 有効（`globals: true`）、セットアップは `src/test/setup.ts`。
+- カバレッジは v8 プロバイダ。`src/main.tsx` と型定義ファイルは計測対象外。
