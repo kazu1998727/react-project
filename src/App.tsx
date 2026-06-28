@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { cn } from "./lib/utils";
 import "./App.css";
 import MainContent from "./components/layout/MainContent";
@@ -8,40 +8,18 @@ import {
   useContentList,
   useCreateContent,
   useUpdateContent,
-  useDeleteContent,
 } from "./hooks/useContent";
-import { useModal } from "./hooks/useModal";
-import ConfirmDialog from "./components/ui/ConfirmDialog";
+import { useDeleteConfirm } from "./hooks/useDeleteConfirm";
+import { useUnsavedGuard } from "./hooks/useUnsavedGuard";
+import { useSidebarState } from "./hooks/useSidebarState";
 
 export default function App() {
   const { data: contentList, isLoading, error } = useContentList();
   const { mutate: createContent } = useCreateContent();
   const { mutate: updateContent } = useUpdateContent();
-  const { mutate: deleteContent } = useDeleteContent();
-  const { open, close } = useModal();
   const isDirtyRef = useRef(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const onBeforeLeaveEdit = (proceed: () => void) => {
-    if (!isDirtyRef.current) {
-      proceed();
-      return;
-    }
-    open({
-      title: "編集中の変更があります",
-      content: (
-        <ConfirmDialog
-          message="保存されていない変更は失われます。続けますか？"
-          confirmLabel="保存しないで続ける"
-          onConfirm={() => {
-            proceed();
-            close();
-          }}
-          onCancel={close}
-        />
-      ),
-    });
-  };
+  const handleDeleteRequest = useDeleteConfirm(contentList);
+  const onBeforeLeaveEdit = useUnsavedGuard(isDirtyRef);
 
   const {
     activeId,
@@ -52,6 +30,9 @@ export default function App() {
     handleContentEditEnd,
     sidebarProps,
   } = usePageNavigation(contentList ?? [], onBeforeLeaveEdit);
+
+  const { sidebarOpen, openSidebar, closeSidebar, selectAndClose } =
+    useSidebarState(handleSelect);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -66,32 +47,10 @@ export default function App() {
       {
         onSuccess: (data) => {
           handleSelect(data.id);
-          setSidebarOpen(false);
+          closeSidebar();
         },
       },
     );
-  };
-
-  const handleSelectWithClose = (id: string) => {
-    handleSelect(id);
-    setSidebarOpen(false);
-  };
-
-  const handleDeleteRequest = (id: string) => {
-    const target = contentList?.find((c) => c.id === id);
-    open({
-      title: "ページを削除しますか？",
-      content: (
-        <ConfirmDialog
-          message={`「${target?.title}」を削除します。この操作は元に戻せません。`}
-          onConfirm={() => {
-            deleteContent(id);
-            close();
-          }}
-          onCancel={close}
-        />
-      ),
-    });
   };
 
   return (
@@ -99,7 +58,7 @@ export default function App() {
       {sidebarOpen && (
         <div
           className="md:hidden fixed inset-0 bg-black/40 z-10"
-          onClick={() => setSidebarOpen(false)}
+          onClick={closeSidebar}
         />
       )}
       <div
@@ -110,7 +69,7 @@ export default function App() {
       >
         <Sidebar
           activeId={activeId}
-          onSelect={handleSelectWithClose}
+          onSelect={selectAndClose}
           onDelete={handleDeleteRequest}
           onAdd={handleAdd}
           {...sidebarProps}
@@ -126,7 +85,7 @@ export default function App() {
         isDirtyRef={isDirtyRef}
         onEditStart={handleContentEditStart}
         onEditEnd={handleContentEditEnd}
-        onOpenSidebar={() => setSidebarOpen(true)}
+        onOpenSidebar={openSidebar}
       />
     </div>
   );
