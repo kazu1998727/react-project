@@ -1,26 +1,23 @@
 import { useRef, useState } from "react";
 
 export type Page = {
+  id: string;
   title: string;
   body: string;
 };
 
-export function usePageNavigation(initialPages: Record<string, Page>) {
-  const [activeId, setActiveId] = useState<string>("1");
-  const [pages, setPages] = useState(initialPages);
+export function usePageNavigation(pages: Record<string, Page>) {
+  const [activeId, setActiveId] = useState<string>("");
   const [isSidebarEditMode, setIsSidebarEditMode] = useState(false);
   const [isContentEditing, setIsContentEditing] = useState(false);
   const [hideSidebarSelection, setHideSidebarSelection] = useState(false);
   const cancelContentEditRef = useRef<(() => void) | null>(null);
 
-  const page = pages[activeId];
-  if (!page) {
-    throw new Error(`Page not found: ${activeId}`);
-  }
-
-  const handleSave = (draft: Page) => {
-    setPages((prev) => ({ ...prev, [activeId]: draft }));
-  };
+  // ユーザーが選択した activeId が存在しない（ロード前など）はフォールバック
+  const effectiveActiveId = pages[activeId]
+    ? activeId
+    : (Object.keys(pages)[0] ?? "");
+  const page = pages[effectiveActiveId];
 
   const handleSelect = (id: string) => {
     if (isContentEditing) {
@@ -52,11 +49,9 @@ export function usePageNavigation(initialPages: Record<string, Page>) {
   };
 
   return {
-    activeId,
+    activeId: effectiveActiveId,
     page,
-    pages,
     cancelContentEditRef,
-    handleSave,
     handleSelect,
     handleContentEditStart,
     handleContentEditEnd,

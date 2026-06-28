@@ -1,18 +1,9 @@
+import { useContentList } from "../../hooks/useContent";
 import { cn } from "../../lib/utils";
 import Button from "../ui/Button";
 import Icon from "../ui/Icon";
 
-type NavItem = {
-  id: string;
-  label: string;
-};
-
-type NavGroup = {
-  items: NavItem[];
-};
-
 type Props = {
-  navGroups: NavGroup[];
   activeId: string;
   onSelect: (id: string) => void;
   isEditMode: boolean;
@@ -21,13 +12,30 @@ type Props = {
 };
 
 export default function Sidebar({
-  navGroups,
   activeId,
   onSelect,
   isEditMode,
   onEditModeChange,
   showSelection,
 }: Props) {
+  const {
+    data: contentList,
+    isLoading: isContentListLoading,
+    isError: isContentListError,
+  } = useContentList();
+
+  if (isContentListLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isContentListError) {
+    return <div>Error: {isContentListError.toString()}</div>;
+  }
+
+  const navGroups = contentList?.map((content) => ({
+    items: [{ id: content.id, label: content.title }],
+  }));
+
   return (
     <aside
       className="sticky top-0 h-screen flex flex-col shrink-0"
@@ -45,8 +53,8 @@ export default function Sidebar({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto pl-10 flex flex-col gap-6">
-        {navGroups.map((group) => (
+      <nav className="flex-1 overflow-y-auto pl-10 flex flex-col">
+        {navGroups?.map((group) => (
           <div key={group.items[0]?.id} className="flex flex-col gap-0.5">
             <ul className="list-none p-0 m-0 flex flex-col">
               {group.items.map((item) => {
