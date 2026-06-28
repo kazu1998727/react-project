@@ -44,7 +44,7 @@ export default function ArticlePanel({
   }, [isDirtyRef, editor.isDirty]);
 
   return (
-    <article className="flex-1 min-h-0 flex flex-col gap-5 w-full p-[30px] box-border bg-(--text-active-bg) rounded-2xl mt-[30px] overflow-hidden">
+    <article className="flex-1 min-h-0 flex flex-col gap-5 w-full p-4 md:p-[30px] box-border bg-(--text-active-bg) rounded-2xl mt-4 md:mt-[30px] overflow-hidden">
       <EditableTitle
         value={editor.draft.title}
         isEditing={editor.isEditingTitle}

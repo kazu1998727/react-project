@@ -13,6 +13,7 @@ type Props = {
   page?: Page;
   onSave: (draft: Page) => void;
   onAdd?: () => void;
+  onOpenSidebar?: () => void;
   onEditStart?: () => void;
   onEditEnd?: () => void;
   onBeforeSwitchField?: (proceed: () => void) => void;
@@ -25,6 +26,7 @@ export default function MainContent({
   page,
   onSave,
   onAdd,
+  onOpenSidebar,
   onEditStart,
   onEditEnd,
   onBeforeSwitchField,
@@ -32,7 +34,28 @@ export default function MainContent({
   isDirtyRef,
 }: Props) {
   return (
-    <main className="flex-1 flex flex-col h-screen overflow-hidden px-10">
+    <main className="flex-1 flex flex-col h-screen overflow-hidden px-4 md:px-10">
+      {onOpenSidebar && (
+        <button
+          onClick={onOpenSidebar}
+          aria-label="メニューを開く"
+          className="md:hidden self-start mt-4 p-1 rounded hover:bg-gray-100 transition-colors"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      )}
       {page ? (
         <ArticlePanel
           key={pageId}

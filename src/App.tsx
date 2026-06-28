@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { cn } from "./lib/utils";
 import "./App.css";
 import MainContent from "./components/layout/MainContent";
 import Sidebar from "./components/layout/Sidebar";
@@ -19,6 +20,7 @@ export default function App() {
   const { mutate: deleteContent } = useDeleteContent();
   const { open, close } = useModal();
   const isDirtyRef = useRef(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const onBeforeLeaveEdit = (proceed: () => void) => {
     if (!isDirtyRef.current) {
@@ -61,8 +63,18 @@ export default function App() {
   const handleAdd = () => {
     createContent(
       { title: "新しいページ", body: "ここに本文を入力してください" },
-      { onSuccess: (data) => handleSelect(data.id) },
+      {
+        onSuccess: (data) => {
+          handleSelect(data.id);
+          setSidebarOpen(false);
+        },
+      },
     );
+  };
+
+  const handleSelectWithClose = (id: string) => {
+    handleSelect(id);
+    setSidebarOpen(false);
   };
 
   const handleDeleteRequest = (id: string) => {
@@ -84,13 +96,26 @@ export default function App() {
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
-      <Sidebar
-        activeId={activeId}
-        onSelect={handleSelect}
-        onDelete={handleDeleteRequest}
-        onAdd={handleAdd}
-        {...sidebarProps}
-      />
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/40 z-10"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-20 transition-transform duration-300 md:relative md:translate-x-0 md:z-auto",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
+        <Sidebar
+          activeId={activeId}
+          onSelect={handleSelectWithClose}
+          onDelete={handleDeleteRequest}
+          onAdd={handleAdd}
+          {...sidebarProps}
+        />
+      </div>
       <MainContent
         pageId={activeId}
         page={page}
@@ -101,6 +126,7 @@ export default function App() {
         isDirtyRef={isDirtyRef}
         onEditStart={handleContentEditStart}
         onEditEnd={handleContentEditEnd}
+        onOpenSidebar={() => setSidebarOpen(true)}
       />
     </div>
   );

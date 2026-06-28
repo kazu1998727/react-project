@@ -27,7 +27,9 @@ export default function EditableTitle({
           <Input value={value} onChange={onChange} autoFocus error={error} />
         </div>
       ) : (
-        <h1 className="text-heading pl-[30px] leading-normal">{value}</h1>
+        <h1 className="text-heading pl-4 md:pl-[30px] leading-normal">
+          {value}
+        </h1>
       )}
       {isEditing ? (
         <div className="flex shrink-0 gap-2.5">

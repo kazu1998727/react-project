@@ -42,7 +42,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className="sticky top-0 h-screen flex flex-col shrink-0 max-w-72"
+      className="sticky top-0 h-screen flex flex-col shrink-0 w-72"
       style={{
         borderRight: "1px solid var(--border)",
         background: "var(--bg)",

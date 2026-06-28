@@ -28,11 +28,11 @@ export default function EditableBody({
             value={value}
             onChange={onChange}
             autoFocus
-            className=" min-h-0 rounded-[8px] p-[30px] bg-white overflow-y-auto"
+            className="min-h-0 rounded-[8px] p-4 md:p-[30px] bg-white overflow-y-auto"
             error={error}
           />
         ) : (
-          <div className="flex-1 min-h-0 rounded-[8px] p-[30px] bg-white overflow-y-auto">
+          <div className="flex-1 min-h-0 rounded-[8px] p-4 md:p-[30px] bg-white overflow-y-auto">
             <p className="m-0 leading-normal whitespace-pre-line text-body">
               {value}
             </p>
