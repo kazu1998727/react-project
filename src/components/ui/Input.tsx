@@ -20,7 +20,7 @@ export default function Input({
       onChange={(e) => onChange(e.target.value)}
       autoFocus={autoFocus}
       className={cn(
-        "w-full font-bold leading-[40px] text-[#333] bg-white border border-[#4CB3F8] rounded-[8px] px-3 outline-none text-heading",
+        "w-full font-bold leading-[40px] text-[#333] bg-white border border-transparent rounded-[8px] px-3 outline-none text-heading focus:border-[#4CB3F8]",
         className,
       )}
     />
