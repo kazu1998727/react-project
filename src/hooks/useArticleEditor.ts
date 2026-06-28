@@ -10,6 +10,7 @@ type Draft = {
 type Options = {
   onEditStart?: () => void;
   onEditEnd?: () => void;
+  onBeforeSwitchField?: (proceed: () => void) => void;
 };
 
 export function useArticleEditor(
@@ -22,19 +23,35 @@ export function useArticleEditor(
   const [draft, setDraft] = useState<Draft>({ title, body });
   const onEditStartRef = useRef(options?.onEditStart);
   const onEditEndRef = useRef(options?.onEditEnd);
+  const onBeforeSwitchFieldRef = useRef(options?.onBeforeSwitchField);
 
   useEffect(() => {
     onEditStartRef.current = options?.onEditStart;
     onEditEndRef.current = options?.onEditEnd;
+    onBeforeSwitchFieldRef.current = options?.onBeforeSwitchField;
   });
 
   const startEdit = useCallback(
     (field: Exclude<EditingField, null>) => {
-      setDraft({ title, body });
-      setEditingField(field);
-      onEditStartRef.current?.();
+      const doSwitch = () => {
+        setDraft({ title, body });
+        setEditingField(field);
+        onEditStartRef.current?.();
+      };
+      if (editingField !== null) {
+        const dirty = draft.title !== title || draft.body !== body;
+        if (dirty) {
+          if (onBeforeSwitchFieldRef.current) {
+            onBeforeSwitchFieldRef.current(doSwitch);
+          } else {
+            doSwitch();
+          }
+          return;
+        }
+      }
+      doSwitch();
     },
-    [title, body],
+    [title, body, editingField, draft.title, draft.body],
   );
 
   const updateDraft = (field: Exclude<EditingField, null>, value: string) => {
@@ -56,9 +73,12 @@ export function useArticleEditor(
     onEditEndRef.current?.();
   }, [title, body]);
 
+  const isDirty = draft.title !== title || draft.body !== body;
+
   return {
     editingField,
     draft,
+    isDirty,
     startEdit,
     updateDraft,
     save,

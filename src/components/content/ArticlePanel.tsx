@@ -9,7 +9,9 @@ type Props = {
   onSave: (draft: { title: string; body: string }) => void;
   onEditStart?: () => void;
   onEditEnd?: () => void;
+  onBeforeSwitchField?: (proceed: () => void) => void;
   cancelRef?: RefObject<(() => void) | null>;
+  isDirtyRef?: RefObject<boolean>;
 };
 
 export default function ArticlePanel({
@@ -18,11 +20,14 @@ export default function ArticlePanel({
   onSave,
   onEditStart,
   onEditEnd,
+  onBeforeSwitchField,
   cancelRef,
+  isDirtyRef,
 }: Props) {
   const editor = useArticleEditor(title, body, onSave, {
     onEditStart,
     onEditEnd,
+    onBeforeSwitchField,
   });
 
   useEffect(() => {
@@ -32,6 +37,11 @@ export default function ArticlePanel({
       cancelRef.current = null;
     };
   }, [cancelRef, editor.cancel]);
+
+  useEffect(() => {
+    if (!isDirtyRef) return;
+    isDirtyRef.current = editor.isDirty;
+  }, [isDirtyRef, editor.isDirty]);
 
   return (
     <article className="flex-1 min-h-0 flex flex-col gap-5 w-full p-[30px] box-border bg-(--text-active-bg) rounded-2xl mt-[30px] overflow-hidden">
