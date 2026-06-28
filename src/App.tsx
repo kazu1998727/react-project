@@ -62,7 +62,7 @@ export default function App() {
 
   const handleAdd = () => {
     createContent(
-      { title: "新しいページ", body: "" },
+      { title: "新しいページ", body: "ここに本文を入力してください" },
       { onSuccess: (data) => handleSelect(data.id) },
     );
   };

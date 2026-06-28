@@ -52,6 +52,7 @@ export default function ArticlePanel({
         onChange={(value) => editor.updateDraft("title", value)}
         onSave={editor.save}
         onCancel={editor.cancel}
+        error={editor.errors.title}
       />
       <EditableBody
         value={editor.draft.body}
@@ -60,6 +61,7 @@ export default function ArticlePanel({
         onChange={(value) => editor.updateDraft("body", value)}
         onSave={editor.save}
         onCancel={editor.cancel}
+        error={editor.errors.body}
       />
     </article>
   );

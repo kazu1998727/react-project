@@ -8,6 +8,7 @@ type Props = {
   onChange: (value: string) => void;
   onSave: () => void;
   onCancel: () => void;
+  error?: string;
 };
 
 export default function EditableTitle({
@@ -17,11 +18,19 @@ export default function EditableTitle({
   onChange,
   onSave,
   onCancel,
+  error,
 }: Props) {
   return (
-    <div className="flex shrink-0 items-center justify-between gap-5">
+    <div className="flex shrink-0 items-start justify-between gap-5">
       {isEditing ? (
-        <Input value={value} onChange={onChange} autoFocus className="flex-1" />
+        <div className="flex-1 flex flex-col gap-1">
+          <Input value={value} onChange={onChange} autoFocus error={error} />
+          {error && (
+            <p className="text-caption leading-none text-red-500 pl-1">
+              {error}
+            </p>
+          )}
+        </div>
       ) : (
         <h1 className="text-heading shrink-0 pl-[30px]">{value}</h1>
       )}

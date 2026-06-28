@@ -5,6 +5,7 @@ type Props = {
   onChange: (value: string) => void;
   className?: string;
   autoFocus?: boolean;
+  error?: string;
 };
 
 export default function TextArea({
@@ -12,6 +13,7 @@ export default function TextArea({
   onChange,
   className,
   autoFocus = false,
+  error,
 }: Props) {
   return (
     <textarea
@@ -21,6 +23,7 @@ export default function TextArea({
       className={cn(
         "w-full h-full min-h-0 leading-normal text-[#333] border border-transparent outline-none resize-none text-body focus:border-[#4CB3F8]",
         className,
+        error && "border-red-500",
       )}
     />
   );

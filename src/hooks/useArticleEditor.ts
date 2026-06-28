@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { z } from "zod/v4";
+import { contentSchema, type ContentFormErrors } from "../schemas/content";
 
 export type EditingField = "title" | "body" | null;
 
@@ -21,6 +23,7 @@ export function useArticleEditor(
 ) {
   const [editingField, setEditingField] = useState<EditingField>(null);
   const [draft, setDraft] = useState<Draft>({ title, body });
+  const [errors, setErrors] = useState<ContentFormErrors>({});
   const onEditStartRef = useRef(options?.onEditStart);
   const onEditEndRef = useRef(options?.onEditEnd);
   const onBeforeSwitchFieldRef = useRef(options?.onBeforeSwitchField);
@@ -56,9 +59,20 @@ export function useArticleEditor(
 
   const updateDraft = (field: Exclude<EditingField, null>, value: string) => {
     setDraft((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   const save = () => {
+    const result = contentSchema.safeParse(draft);
+    if (!result.success) {
+      const fieldErrors = z.flattenError(result.error).fieldErrors;
+      setErrors({
+        title: fieldErrors.title?.[0],
+        body: fieldErrors.body?.[0],
+      });
+      return;
+    }
+    setErrors({});
     setDraft((currentDraft) => {
       onSave(currentDraft);
       return currentDraft;
@@ -69,6 +83,7 @@ export function useArticleEditor(
 
   const cancel = useCallback(() => {
     setDraft({ title, body });
+    setErrors({});
     setEditingField(null);
     onEditEndRef.current?.();
   }, [title, body]);
@@ -79,6 +94,7 @@ export function useArticleEditor(
     editingField,
     draft,
     isDirty,
+    errors,
     startEdit,
     updateDraft,
     save,
