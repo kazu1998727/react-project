@@ -72,6 +72,7 @@ export default function App() {
           onSelect={selectAndClose}
           onDelete={handleDeleteRequest}
           onAdd={handleAdd}
+          isSaving={isSaving}
           {...sidebarProps}
         />
       </div>

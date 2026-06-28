@@ -11,6 +11,7 @@ type Props = {
   isEditMode: boolean;
   onEditModeChange: (value: boolean) => void;
   showSelection: boolean;
+  isSaving?: boolean;
 };
 
 export default function Sidebar({
@@ -21,6 +22,7 @@ export default function Sidebar({
   isEditMode,
   onEditModeChange,
   showSelection,
+  isSaving,
 }: Props) {
   const {
     data: contentList,
@@ -110,6 +112,7 @@ export default function Sidebar({
             size="m"
             variant="secondary"
             onClick={onAdd}
+            disabled={isSaving}
           />
         )}
         <Button
@@ -118,6 +121,7 @@ export default function Sidebar({
           size="m"
           variant="primary"
           onClick={() => onEditModeChange(!isEditMode)}
+          disabled={isSaving}
         />
       </div>
     </aside>

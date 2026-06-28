@@ -49,6 +49,7 @@ export default function EditableBody({
             size="s"
             variant="muted"
             onClick={onCancel}
+            disabled={isSaving}
           />
           <Button
             icon="save"
@@ -59,7 +60,13 @@ export default function EditableBody({
           />
         </div>
       ) : (
-        <Button icon="edit" label="Edit" size="m" onClick={onStartEdit} />
+        <Button
+          icon="edit"
+          label="Edit"
+          size="m"
+          onClick={onStartEdit}
+          disabled={isSaving}
+        />
       )}
     </div>
   );
