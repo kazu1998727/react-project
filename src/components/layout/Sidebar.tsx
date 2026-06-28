@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { cn } from "../../lib/utils";
 import Button from "../ui/Button";
 import Icon from "../ui/Icon";
@@ -18,6 +19,8 @@ type Props = {
 };
 
 export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
+  const [isEditMode, setIsEditMode] = useState(false);
+
   return (
     <aside
       className="sticky top-0 h-screen flex flex-col shrink-0"
@@ -38,7 +41,7 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
       <nav className="flex-1 overflow-y-auto pl-10 flex flex-col gap-6">
         {navGroups.map((group) => (
           <div key={group.items[0]?.id} className="flex flex-col gap-0.5">
-            <ul className="list-none p-0 m-0 flex flex-col gap-0.5">
+            <ul className="list-none p-0 m-0 flex flex-col">
               {group.items.map((item) => {
                 const isActive = item.id === activeId;
                 return (
@@ -51,7 +54,16 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
                           "text-(--text-active-color) bg-(--text-active-bg) font-bold rounded-[4px]",
                       )}
                     >
-                      <span>{item.label}</span>
+                      <span className="flex-1">{item.label}</span>
+                      {isEditMode && (
+                        <span
+                          role="button"
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
+                        >
+                          <Icon name="delete" size={20} />
+                        </span>
+                      )}
                     </button>
                   </li>
                 );
@@ -62,8 +74,31 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
       </nav>
 
       {/* User */}
-      <div className="p-[10px] bg-(--text-active-bg) flex justify-end">
-        <Button icon="edit" label="Edit" size="m" />
+      <div
+        className={cn(
+          "p-[10px] bg-(--text-active-bg) flex justify-end pl-10",
+          isEditMode && "justify-between",
+        )}
+      >
+        {isEditMode && (
+          <Button
+            icon="add"
+            label="New Page"
+            size="m"
+            variant="secondary"
+            onClick={() => {
+              const newId = Math.random().toString(36).substring(2, 15);
+              onSelect(newId);
+            }}
+          />
+        )}
+        <Button
+          icon={isEditMode ? "done" : "edit"}
+          label={isEditMode ? "Done" : "Edit"}
+          size="m"
+          variant="primary"
+          onClick={() => setIsEditMode((prev) => !prev)}
+        />
       </div>
     </aside>
   );
