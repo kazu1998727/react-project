@@ -6,7 +6,10 @@ export type Page = {
   body: string;
 };
 
-export function usePageNavigation(pages: Record<string, Page>) {
+export function usePageNavigation(
+  pages: Page[],
+  onBeforeLeaveEdit?: (proceed: () => void) => void,
+) {
   const [activeId, setActiveId] = useState<string>("");
   const [isSidebarEditMode, setIsSidebarEditMode] = useState(false);
   const [isContentEditing, setIsContentEditing] = useState(false);
@@ -14,14 +17,24 @@ export function usePageNavigation(pages: Record<string, Page>) {
   const cancelContentEditRef = useRef<(() => void) | null>(null);
 
   // ユーザーが選択した activeId が存在しない（ロード前など）はフォールバック
-  const effectiveActiveId = pages[activeId]
+  const effectiveActiveId = pages.some((p) => p.id === activeId)
     ? activeId
-    : (Object.keys(pages)[0] ?? "");
-  const page = pages[effectiveActiveId];
+    : (pages[0]?.id ?? "");
+  const page = pages.find((p) => p.id === effectiveActiveId);
 
   const handleSelect = (id: string) => {
     if (isContentEditing) {
-      cancelContentEditRef.current?.();
+      const proceed = () => {
+        cancelContentEditRef.current?.();
+        setHideSidebarSelection(false);
+        setActiveId(id);
+      };
+      if (onBeforeLeaveEdit) {
+        onBeforeLeaveEdit(proceed);
+      } else {
+        proceed();
+      }
+      return;
     }
     setHideSidebarSelection(false);
     setActiveId(id);
@@ -29,8 +42,17 @@ export function usePageNavigation(pages: Record<string, Page>) {
 
   const handleSidebarEditModeChange = (value: boolean) => {
     if (value && isContentEditing) {
-      cancelContentEditRef.current?.();
-      setHideSidebarSelection(true);
+      const proceed = () => {
+        cancelContentEditRef.current?.();
+        setHideSidebarSelection(true);
+        setIsSidebarEditMode(true);
+      };
+      if (onBeforeLeaveEdit) {
+        onBeforeLeaveEdit(proceed);
+      } else {
+        proceed();
+      }
+      return;
     }
     if (!value) {
       setHideSidebarSelection(false);

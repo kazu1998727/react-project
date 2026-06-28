@@ -6,6 +6,8 @@ import Icon from "../ui/Icon";
 type Props = {
   activeId: string;
   onSelect: (id: string) => void;
+  onDelete: (id: string) => void;
+  onAdd: () => void;
   isEditMode: boolean;
   onEditModeChange: (value: boolean) => void;
   showSelection: boolean;
@@ -14,6 +16,8 @@ type Props = {
 export default function Sidebar({
   activeId,
   onSelect,
+  onDelete,
+  onAdd,
   isEditMode,
   onEditModeChange,
   showSelection,
@@ -73,7 +77,10 @@ export default function Sidebar({
                       {isEditMode && (
                         <span
                           role="button"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(item.id);
+                          }}
                           className="flex items-center opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
                         >
                           <Icon name="delete" size={20} />
@@ -101,10 +108,7 @@ export default function Sidebar({
             label="New Page"
             size="m"
             variant="secondary"
-            onClick={() => {
-              const newId = Math.random().toString(36).substring(2, 15);
-              onSelect(newId);
-            }}
+            onClick={onAdd}
           />
         )}
         <Button
