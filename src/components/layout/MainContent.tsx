@@ -13,6 +13,7 @@ type Props = {
   page?: Page;
   onSave: (draft: Page) => void;
   onAdd?: () => void;
+  isSaving?: boolean;
   onOpenSidebar?: () => void;
   onEditStart?: () => void;
   onEditEnd?: () => void;
@@ -26,6 +27,7 @@ export default function MainContent({
   page,
   onSave,
   onAdd,
+  isSaving,
   onOpenSidebar,
   onEditStart,
   onEditEnd,
@@ -62,6 +64,7 @@ export default function MainContent({
           title={page.title}
           body={page.body}
           onSave={onSave}
+          isSaving={isSaving}
           onEditStart={onEditStart}
           onEditEnd={onEditEnd}
           onBeforeSwitchField={onBeforeSwitchField}

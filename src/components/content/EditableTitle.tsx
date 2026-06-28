@@ -9,6 +9,7 @@ type Props = {
   onSave: () => void;
   onCancel: () => void;
   error?: string;
+  isSaving?: boolean;
 };
 
 export default function EditableTitle({
@@ -19,6 +20,7 @@ export default function EditableTitle({
   onSave,
   onCancel,
   error,
+  isSaving,
 }: Props) {
   return (
     <div className="flex shrink-0 items-start justify-between gap-5">
@@ -40,7 +42,13 @@ export default function EditableTitle({
             variant="muted"
             onClick={onCancel}
           />
-          <Button icon="save" label="Save" size="s" onClick={onSave} />
+          <Button
+            icon="save"
+            label="Save"
+            size="s"
+            onClick={onSave}
+            disabled={isSaving}
+          />
         </div>
       ) : (
         <Button icon="edit" label="Edit" size="m" onClick={onStartEdit} />

@@ -7,6 +7,7 @@ type Props = {
   title: string;
   body: string;
   onSave: (draft: { title: string; body: string }) => void;
+  isSaving?: boolean;
   onEditStart?: () => void;
   onEditEnd?: () => void;
   onBeforeSwitchField?: (proceed: () => void) => void;
@@ -18,6 +19,7 @@ export default function ArticlePanel({
   title,
   body,
   onSave,
+  isSaving,
   onEditStart,
   onEditEnd,
   onBeforeSwitchField,
@@ -53,6 +55,7 @@ export default function ArticlePanel({
         onSave={editor.save}
         onCancel={editor.cancel}
         error={editor.errors.title}
+        isSaving={isSaving}
       />
       <EditableBody
         value={editor.draft.body}
@@ -62,6 +65,7 @@ export default function ArticlePanel({
         onSave={editor.save}
         onCancel={editor.cancel}
         error={editor.errors.body}
+        isSaving={isSaving}
       />
     </article>
   );

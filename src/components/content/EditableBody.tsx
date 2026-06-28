@@ -9,6 +9,7 @@ type Props = {
   onSave: () => void;
   onCancel: () => void;
   error?: string;
+  isSaving?: boolean;
 };
 
 export default function EditableBody({
@@ -19,6 +20,7 @@ export default function EditableBody({
   onSave,
   onCancel,
   error,
+  isSaving,
 }: Props) {
   return (
     <div className="flex flex-1 min-h-0 items-start justify-between gap-5 overflow-hidden">
@@ -48,7 +50,13 @@ export default function EditableBody({
             variant="muted"
             onClick={onCancel}
           />
-          <Button icon="save" label="Save" size="s" onClick={onSave} />
+          <Button
+            icon="save"
+            label="Save"
+            size="s"
+            onClick={onSave}
+            disabled={isSaving}
+          />
         </div>
       ) : (
         <Button icon="edit" label="Edit" size="m" onClick={onStartEdit} />

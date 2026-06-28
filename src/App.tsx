@@ -16,7 +16,7 @@ import { useSidebarState } from "./hooks/useSidebarState";
 export default function App() {
   const { data: contentList, isLoading, error } = useContentList();
   const { mutate: createContent } = useCreateContent();
-  const { mutate: updateContent } = useUpdateContent();
+  const { mutate: updateContent, isPending: isSaving } = useUpdateContent();
   const isDirtyRef = useRef(false);
   const handleDeleteRequest = useDeleteConfirm(contentList);
   const onBeforeLeaveEdit = useUnsavedGuard(isDirtyRef);
@@ -80,6 +80,7 @@ export default function App() {
         page={page}
         onSave={handleSave}
         onAdd={handleAdd}
+        isSaving={isSaving}
         onBeforeSwitchField={onBeforeLeaveEdit}
         cancelRef={cancelContentEditRef}
         isDirtyRef={isDirtyRef}
