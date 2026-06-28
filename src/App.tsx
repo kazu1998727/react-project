@@ -1,7 +1,7 @@
-import { useState } from "react";
 import "./App.css";
 import MainContent from "./components/layout/MainContent";
 import Sidebar from "./components/layout/Sidebar";
+import { usePageNavigation } from "./hooks/usePageNavigation";
 
 const navGroups = [
   {
@@ -13,10 +13,7 @@ const navGroups = [
   },
 ];
 
-type Page = {
-  title: string;
-  body: string;
-};
+import type { Page } from "./hooks/usePageNavigation";
 
 const initialPages: Record<string, Page> = {
   "1": {
@@ -34,29 +31,33 @@ const initialPages: Record<string, Page> = {
 };
 
 export default function App() {
-  const [activeId, setActiveId] = useState<string>("1");
-  const [pages, setPages] = useState(initialPages);
-  const page = pages[activeId];
-
-  if (!page) {
-    throw new Error(`Page not found: ${activeId}`);
-  }
-
-  const handleSave = (draft: Page) => {
-    setPages((prev) => ({
-      ...prev,
-      [activeId]: draft,
-    }));
-  };
+  const {
+    activeId,
+    page,
+    cancelContentEditRef,
+    handleSave,
+    handleSelect,
+    handleContentEditStart,
+    handleContentEditEnd,
+    sidebarProps,
+  } = usePageNavigation(initialPages);
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
       <Sidebar
         navGroups={navGroups}
         activeId={activeId}
-        onSelect={setActiveId}
+        onSelect={handleSelect}
+        {...sidebarProps}
       />
-      <MainContent pageId={activeId} page={page} onSave={handleSave} />
+      <MainContent
+        pageId={activeId}
+        page={page}
+        onSave={handleSave}
+        cancelRef={cancelContentEditRef}
+        onEditStart={handleContentEditStart}
+        onEditEnd={handleContentEditEnd}
+      />
     </div>
   );
 }

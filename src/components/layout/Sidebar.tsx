@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { cn } from "../../lib/utils";
 import Button from "../ui/Button";
 import Icon from "../ui/Icon";
@@ -16,11 +15,19 @@ type Props = {
   navGroups: NavGroup[];
   activeId: string;
   onSelect: (id: string) => void;
+  isEditMode: boolean;
+  onEditModeChange: (value: boolean) => void;
+  showSelection: boolean;
 };
 
-export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
-  const [isEditMode, setIsEditMode] = useState(false);
-
+export default function Sidebar({
+  navGroups,
+  activeId,
+  onSelect,
+  isEditMode,
+  onEditModeChange,
+  showSelection,
+}: Props) {
   return (
     <aside
       className="sticky top-0 h-screen flex flex-col shrink-0"
@@ -43,7 +50,7 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
           <div key={group.items[0]?.id} className="flex flex-col gap-0.5">
             <ul className="list-none p-0 m-0 flex flex-col">
               {group.items.map((item) => {
-                const isActive = item.id === activeId;
+                const isActive = showSelection && item.id === activeId;
                 return (
                   <li key={item.id}>
                     <button
@@ -97,7 +104,7 @@ export default function Sidebar({ navGroups, activeId, onSelect }: Props) {
           label={isEditMode ? "Done" : "Edit"}
           size="m"
           variant="primary"
-          onClick={() => setIsEditMode((prev) => !prev)}
+          onClick={() => onEditModeChange(!isEditMode)}
         />
       </div>
     </aside>

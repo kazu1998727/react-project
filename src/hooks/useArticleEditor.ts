@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type EditingField = "title" | "body" | null;
 
@@ -7,32 +7,54 @@ type Draft = {
   body: string;
 };
 
+type Options = {
+  onEditStart?: () => void;
+  onEditEnd?: () => void;
+};
+
 export function useArticleEditor(
   title: string,
   body: string,
   onSave: (draft: Draft) => void,
+  options?: Options,
 ) {
   const [editingField, setEditingField] = useState<EditingField>(null);
   const [draft, setDraft] = useState<Draft>({ title, body });
+  const onEditStartRef = useRef(options?.onEditStart);
+  const onEditEndRef = useRef(options?.onEditEnd);
 
-  const startEdit = (field: Exclude<EditingField, null>) => {
-    setDraft({ title, body });
-    setEditingField(field);
-  };
+  useEffect(() => {
+    onEditStartRef.current = options?.onEditStart;
+    onEditEndRef.current = options?.onEditEnd;
+  });
+
+  const startEdit = useCallback(
+    (field: Exclude<EditingField, null>) => {
+      setDraft({ title, body });
+      setEditingField(field);
+      onEditStartRef.current?.();
+    },
+    [title, body],
+  );
 
   const updateDraft = (field: Exclude<EditingField, null>, value: string) => {
     setDraft((prev) => ({ ...prev, [field]: value }));
   };
 
   const save = () => {
-    onSave(draft);
+    setDraft((currentDraft) => {
+      onSave(currentDraft);
+      return currentDraft;
+    });
     setEditingField(null);
+    onEditEndRef.current?.();
   };
 
-  const cancel = () => {
+  const cancel = useCallback(() => {
     setDraft({ title, body });
     setEditingField(null);
-  };
+    onEditEndRef.current?.();
+  }, [title, body]);
 
   return {
     editingField,
