@@ -23,11 +23,11 @@ const sizeStyles: Record<Size, { button: string }> = {
 
 const variantStyles: Record<Variant, string> = {
   primary:
-    "bg-[#4CB3F8] text-white hover:bg-[#3C8EC4] active:bg-[#347CAB] disabled:bg-[#4CB3F8]",
+    "bg-(--color-action) text-white hover:bg-(--color-action-hover) active:bg-(--color-action-active) disabled:bg-(--color-action)",
   secondary:
-    "bg-white text-[#4CB3F8] border border-[#4CB3F8] hover:bg-[#CCCCCC] active:bg-[#B3B3B3] disabled:opacity-40",
+    "bg-white text-(--color-action) border border-(--color-action) hover:bg-(--color-gray-light) active:bg-(--color-gray-base) disabled:opacity-40",
   muted:
-    "bg-[#B3B3B3] text-white hover:bg-[#999999] active:bg-[#808080] disabled:bg-[#B3B3B3]",
+    "bg-(--color-gray-base) text-white hover:bg-(--color-gray-mid) active:bg-(--color-gray-strong) disabled:bg-(--color-gray-base)",
 };
 
 export default function Button({

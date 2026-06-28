@@ -17,7 +17,7 @@ export default function ConfirmDialog({
       <div className="flex justify-end gap-2">
         <button
           onClick={onCancel}
-          className="px-4 py-2 rounded border border-[#4CB3F8] text-[#4CB3F8] text-sm hover:opacity-80 cursor-pointer"
+          className="px-4 py-2 rounded border border-(--color-action) text-(--color-action) text-sm hover:opacity-80 cursor-pointer"
         >
           キャンセル
         </button>

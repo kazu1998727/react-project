@@ -8,6 +8,16 @@
   --bg: #fff;
   --border: #f6f8fa;
 
+  --color-action: #4cb3f8;
+  --color-action-hover: #3c8ec4;
+  --color-action-active: #347cab;
+
+  --color-gray-faint: #e6e6e6;
+  --color-gray-light: #cccccc;
+  --color-gray-base: #b3b3b3;
+  --color-gray-mid: #999999;
+  --color-gray-strong: #808080;
+
   letter-spacing: 0.1px;
   color-scheme: light;
   color: var(--text);
