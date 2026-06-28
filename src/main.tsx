@@ -3,8 +3,8 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
 import App from "./App.tsx";
-import { ModalProvider } from "./hooks/useModal.tsx";
-import { ToastProvider } from "./hooks/useToast.tsx";
+import { ModalProvider } from "./providers/ModalProvider.tsx";
+import { ToastProvider } from "./providers/ToastProvider.tsx";
 
 const queryClient = new QueryClient();
 
