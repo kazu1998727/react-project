@@ -16,16 +16,21 @@ export default function Input({
   error,
 }: Props) {
   return (
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      autoFocus={autoFocus}
-      className={cn(
-        "w-full font-bold leading-[40px] text-[#333] bg-white border border-transparent rounded-[8px] px-3 outline-none text-heading focus:border-[#4CB3F8]",
-        className,
-        error && "border-red-500",
+    <>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoFocus={autoFocus}
+        className={cn(
+          "w-full font-bold leading-[40px] text-[#333] bg-white border border-transparent rounded-[8px] px-3 outline-none text-heading focus:border-[#4CB3F8]",
+          className,
+          error && "border-red-500",
+        )}
+      />
+      {error && (
+        <p className="text-caption leading-none text-red-500 pl-1">{error}</p>
       )}
-    />
+    </>
   );
 }

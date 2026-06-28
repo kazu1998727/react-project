@@ -10,7 +10,6 @@ import {
   useDeleteContent,
 } from "./hooks/useContent";
 import { useModal } from "./hooks/useModal";
-import { useToast } from "./hooks/useToast";
 import ConfirmDialog from "./components/ui/ConfirmDialog";
 
 export default function App() {
@@ -19,7 +18,6 @@ export default function App() {
   const { mutate: updateContent } = useUpdateContent();
   const { mutate: deleteContent } = useDeleteContent();
   const { open, close } = useModal();
-  const { toast } = useToast();
   const isDirtyRef = useRef(false);
 
   const onBeforeLeaveEdit = (proceed: () => void) => {
@@ -68,10 +66,6 @@ export default function App() {
   };
 
   const handleDeleteRequest = (id: string) => {
-    if (contentList && contentList.length <= 1) {
-      toast({ message: "最後のページは削除できません", type: "error" });
-      return;
-    }
     const target = contentList?.find((c) => c.id === id);
     open({
       title: "ページを削除しますか？",

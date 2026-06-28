@@ -24,24 +24,19 @@ export default function EditableBody({
     <div className="flex flex-1 min-h-0 items-start justify-between gap-5 overflow-hidden">
       <div className="flex-1 flex flex-col min-h-0 gap-1 h-full">
         {isEditing ? (
-          <div className="flex-1">
-            <TextArea
-              value={value}
-              onChange={onChange}
-              autoFocus
-              className=" min-h-0 rounded-[8px] p-[30px] bg-white overflow-y-auto"
-              error={error}
-            />
-          </div>
+          <TextArea
+            value={value}
+            onChange={onChange}
+            autoFocus
+            className=" min-h-0 rounded-[8px] p-[30px] bg-white overflow-y-auto"
+            error={error}
+          />
         ) : (
           <div className="flex-1 min-h-0 rounded-[8px] p-[30px] bg-white overflow-y-auto">
             <p className="m-0 leading-normal whitespace-pre-line text-body">
               {value}
             </p>
           </div>
-        )}
-        {isEditing && error && (
-          <p className="text-caption leading-none text-red-500 pl-1">{error}</p>
         )}
       </div>
       {isEditing ? (

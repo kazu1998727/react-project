@@ -42,7 +42,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className="sticky top-0 h-screen flex flex-col shrink-0"
+      className="sticky top-0 h-screen flex flex-col shrink-0 max-w-72"
       style={{
         borderRight: "1px solid var(--border)",
         background: "var(--bg)",
@@ -73,7 +73,9 @@ export default function Sidebar({
                           "text-(--text-active-color) bg-(--text-active-bg) font-bold rounded-[4px]",
                       )}
                     >
-                      <span className="flex-1">{item.label}</span>
+                      <span className="flex-1 truncate max-w-[calc(100%-40px)]">
+                        {item.label}
+                      </span>
                       {isEditMode && (
                         <span
                           role="button"

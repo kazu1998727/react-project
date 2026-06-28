@@ -16,15 +16,20 @@ export default function TextArea({
   error,
 }: Props) {
   return (
-    <textarea
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      autoFocus={autoFocus}
-      className={cn(
-        "w-full h-full min-h-0 leading-normal text-[#333] border border-transparent outline-none resize-none text-body focus:border-[#4CB3F8]",
-        className,
-        error && "border-red-500",
+    <div className="flex flex-1 flex-col gap-1">
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoFocus={autoFocus}
+        className={cn(
+          "w-full h-full min-h-0 leading-normal text-[#333] border border-transparent outline-none resize-none text-body focus:border-[#4CB3F8]",
+          className,
+          error && "border-red-500",
+        )}
+      />
+      {error && (
+        <p className="text-caption leading-none text-red-500 pl-1">{error}</p>
       )}
-    />
+    </div>
   );
 }
