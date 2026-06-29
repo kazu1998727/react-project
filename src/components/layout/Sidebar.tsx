@@ -72,7 +72,7 @@ export default function Sidebar({
                             e.stopPropagation();
                             onDelete(item.id);
                           }}
-                          className="flex items-center hover:bg-(--color-gray-faint) active:bg-(--color-gray-light) disabled:opacity-40 transition-opacity cursor-pointer rounded-sm p-1"
+                          className="flex items-center hover:bg-(--color-gray-faint) active:bg-(--color-gray-light) disabled:opacity-40 rounded-sm p-1 transition-all duration-150 cursor-pointer"
                         >
                           <Icon name="delete" size={20} />
                         </button>

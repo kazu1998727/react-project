@@ -23,8 +23,8 @@ export default function EditableBody({
   isSaving,
 }: Props) {
   return (
-    <div className="flex flex-1 min-h-0 items-start justify-between gap-5 overflow-hidden">
-      <div className="flex-1 flex flex-col min-h-0 gap-1 h-full">
+    <div className="flex flex-1 min-h-0 items-start justify-between gap-5 overflow-hidden md:flex-row flex-col">
+      <div className="flex-1 flex flex-col min-h-0 gap-1 h-full w-full">
         {isEditing ? (
           <TextArea
             value={value}
