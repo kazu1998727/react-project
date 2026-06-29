@@ -36,6 +36,7 @@
     "clsx": "^2.1.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-error-boundary": "^6.1.2",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
   },

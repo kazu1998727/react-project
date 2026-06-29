@@ -24,21 +24,9 @@ export default function Sidebar({
   showSelection,
   isSaving,
 }: Props) {
-  const {
-    data: contentList,
-    isLoading: isContentListLoading,
-    isError: isContentListError,
-  } = useContentList();
+  const { data: contentList } = useContentList();
 
-  if (isContentListLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isContentListError) {
-    return <div>Error: {isContentListError.toString()}</div>;
-  }
-
-  const navGroups = contentList?.map((content) => ({
+  const navGroups = contentList.map((content) => ({
     items: [{ id: content.id, label: content.title }],
   }));
 
@@ -60,7 +48,7 @@ export default function Sidebar({
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto pl-10 flex flex-col">
-        {navGroups?.map((group) => (
+        {navGroups.map((group) => (
           <div key={group.items[0]?.id} className="flex flex-col gap-0.5">
             <ul className="list-none p-0 m-0 flex flex-col">
               {group.items.map((item) => {

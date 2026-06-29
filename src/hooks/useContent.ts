@@ -1,16 +1,20 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { contentApi, type ContentInput } from "../apis/content";
 
 const QUERY_KEY = ["content"] as const;
 
 export const useContentList = () =>
-  useQuery({
+  useSuspenseQuery({
     queryKey: QUERY_KEY,
     queryFn: contentApi.list,
   });
 
 export const useContent = (id: string) =>
-  useQuery({
+  useSuspenseQuery({
     queryKey: [...QUERY_KEY, id],
     queryFn: () => contentApi.get(id),
   });

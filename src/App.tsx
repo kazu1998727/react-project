@@ -1,6 +1,9 @@
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { cn } from "./lib/utils";
 import "./App.css";
+import ErrorFallback from "./components/layout/ErrorFallback";
+import Spinner from "./components/ui/Spinner";
 import MainContent from "./components/layout/MainContent";
 import Sidebar from "./components/layout/Sidebar";
 import { usePageNavigation } from "./hooks/usePageNavigation";
@@ -12,18 +15,20 @@ import {
 import { useDeleteConfirm } from "./hooks/useDeleteConfirm";
 import { useUnsavedGuard } from "./hooks/useUnsavedGuard";
 import { useSidebarState } from "./hooks/useSidebarState";
+import { useToast } from "./hooks/useToast";
+import { MESSAGES, errorDetail } from "./lib/messages";
 
-export default function App() {
-  const { data: contentList, isLoading, error } = useContentList();
+function AppContent() {
+  const { data: contentList } = useContentList();
   const { mutate: createContent } = useCreateContent();
   const { mutate: updateContent, isPending: isSaving } = useUpdateContent();
   const isDirtyRef = useRef(false);
   const handleDeleteRequest = useDeleteConfirm(contentList);
   const onBeforeLeaveEdit = useUnsavedGuard(isDirtyRef);
+  const { toast } = useToast();
 
   const {
     activeId,
-    page,
     cancelContentEditRef,
     handleSelect,
     handleContentEditStart,
@@ -34,11 +39,18 @@ export default function App() {
   const { sidebarOpen, openSidebar, closeSidebar, selectAndClose } =
     useSidebarState(handleSelect);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   const handleSave = ({ title, body }: { title: string; body: string }) => {
-    updateContent({ id: activeId, input: { title, body } });
+    updateContent(
+      { id: activeId, input: { title, body } },
+      {
+        onError: (error) => {
+          toast({
+            message: MESSAGES.updateError(errorDetail(error)),
+            type: "error",
+          });
+        },
+      },
+    );
   };
 
   const handleAdd = () => {
@@ -48,6 +60,12 @@ export default function App() {
         onSuccess: (data) => {
           handleSelect(data.id);
           closeSidebar();
+        },
+        onError: (error) => {
+          toast({
+            message: MESSAGES.createError(errorDetail(error)),
+            type: "error",
+          });
         },
       },
     );
@@ -78,7 +96,6 @@ export default function App() {
       </div>
       <MainContent
         pageId={activeId}
-        page={page}
         onSave={handleSave}
         onAdd={handleAdd}
         isSaving={isSaving}
@@ -90,5 +107,21 @@ export default function App() {
         onOpenSidebar={openSidebar}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center w-full h-screen">
+            <Spinner size={40} />
+          </div>
+        }
+      >
+        <AppContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
