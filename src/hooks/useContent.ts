@@ -3,7 +3,8 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { contentApi, type ContentInput } from "../apis/content";
+import { contentApi } from "../apis/content";
+import type { ContentInput } from "../types/content";
 
 const QUERY_KEY = ["content"] as const;
 

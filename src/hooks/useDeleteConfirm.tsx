@@ -1,5 +1,5 @@
 import ConfirmDialog from "../components/ui/ConfirmDialog";
-import type { Content } from "../apis/content";
+import type { Content } from "../types/content";
 import { useDeleteContent } from "./useContent";
 import { useModal } from "./useModal";
 

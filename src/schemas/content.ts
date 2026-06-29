@@ -12,4 +12,4 @@ export const contentSchema = z.object({
     .max(2000, "詳細は2000文字以内で入力してください"),
 });
 
-export type ContentFormErrors = Partial<Record<"title" | "body", string>>;
+export type { ContentFormErrors } from "../types/content";

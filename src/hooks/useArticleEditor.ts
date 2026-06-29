@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod/v4";
-import { contentSchema, type ContentFormErrors } from "../schemas/content";
+import { contentSchema } from "../schemas/content";
+import type { ContentFormErrors } from "../types/content";
 
 export type EditingField = "title" | "body" | null;
 

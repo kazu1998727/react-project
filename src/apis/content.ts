@@ -1,12 +1,7 @@
 import { client } from "./client";
+import type { Content, ContentInput } from "../types/content";
 
-export type Content = {
-  id: string;
-  title: string;
-  body: string;
-};
-
-export type ContentInput = Omit<Content, "id">;
+export type { Content, ContentInput };
 
 export const contentApi = {
   list: () => client.get<Content[]>("/content"),
