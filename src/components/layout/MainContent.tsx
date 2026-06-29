@@ -1,17 +1,11 @@
 import type { RefObject } from "react";
-import ArticlePanel from "../content/ArticlePanel";
+import ContentDetail from "../content/ContentDetail";
 import Footer from "./Footer";
 import Button from "../ui/Button";
 
-type Page = {
-  title: string;
-  body: string;
-};
-
 type Props = {
   pageId: string;
-  page?: Page;
-  onSave: (draft: Page) => void;
+  onSave: (draft: { title: string; body: string }) => void;
   onAdd?: () => void;
   isSaving?: boolean;
   onOpenSidebar?: () => void;
@@ -24,7 +18,6 @@ type Props = {
 
 export default function MainContent({
   pageId,
-  page,
   onSave,
   onAdd,
   isSaving,
@@ -58,11 +51,9 @@ export default function MainContent({
           </svg>
         </button>
       )}
-      {page ? (
-        <ArticlePanel
-          key={pageId}
-          title={page.title}
-          body={page.body}
+      {pageId ? (
+        <ContentDetail
+          pageId={pageId}
           onSave={onSave}
           isSaving={isSaving}
           onEditStart={onEditStart}
