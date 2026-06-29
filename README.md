@@ -6,6 +6,8 @@
 - **フレームワーク**: React 19 + TypeScript（React Compiler 有効）
 - **ビルド/開発**: Vite 8
 - **サーバー状態管理**: TanStack Query (React Query) v5
+- **エラーハンドリング**: react-error-boundary
+- **バリデーション**: Zod v4
 - **スタイリング**: Tailwind CSS v4
 - **テスト**: Vitest + Testing Library
 - **パッケージマネージャ**: pnpm
@@ -121,19 +123,22 @@ src/
 ├── components/
 │   ├── content/           記事編集系
 │   │   ├── ArticlePanel.tsx   タイトル/本文の編集パネル
+│   │   ├── ContentDetail.tsx  詳細取得・独自ErrorBoundary/Suspense を持つラッパー
 │   │   ├── EditableTitle.tsx
 │   │   └── EditableBody.tsx
 │   ├── layout/            レイアウト
 │   │   ├── Sidebar.tsx        ページ一覧・編集モード・追加/削除ボタン
 │   │   ├── MainContent.tsx    コンテンツ表示・空状態
+│   │   ├── ErrorFallback.tsx  全画面エラー表示（再試行ボタン付き）
 │   │   └── Footer.tsx
 │   └── ui/                汎用UI
 │       ├── Button.tsx / Icon.tsx / Input.tsx / TextArea.tsx
+│       ├── Spinner.tsx        ローディングスピナー
 │       ├── Modal.tsx          createPortal によるモーダル土台
 │       ├── Toast.tsx          トースト表示リスト
 │       └── ConfirmDialog.tsx  確認ダイアログ（モーダル中身として使用）
 ├── hooks/                 ロジック層（カスタムフック）
-│   ├── useContent.ts          React Query による CRUD フック群
+│   ├── useContent.ts          React Query による CRUD フック群（useSuspenseQuery）
 │   ├── usePageNavigation.ts   ページ選択・編集状態・遷移ガードの統括
 │   ├── useArticleEditor.ts    タイトル/本文の編集状態・差分(isDirty)管理
 │   ├── useModal.ts            ModalContext を参照する consumer フック
@@ -143,7 +148,12 @@ src/
 │   ├── ModalProvider.tsx      Provider 実体（モーダル描画）
 │   ├── toastContext.ts        Context 定義のみ
 │   └── ToastProvider.tsx      Provider 実体（トースト描画）
-├── lib/utils.ts           cn()（clsx + tailwind-merge）
+├── schemas/               バリデーションスキーマ
+│   ├── content.ts             Zod スキーマ（タイトル・本文の制約定義）
+│   └── content.test.ts        バリデーションの境界値テスト
+├── lib/
+│   ├── utils.ts           cn()（clsx + tailwind-merge）
+│   └── messages.ts        トーストメッセージ定数・エラー文字列生成ユーティリティ
 ├── App.tsx                画面全体の組み立て・ハンドラ定義
 └── main.tsx               エントリ。Provider のネスト構成
 ```
@@ -189,7 +199,33 @@ toast({ message: "最後のページは削除できません", type: "error" });
 - 遷移可否の判断は `usePageNavigation` に渡す `onBeforeLeaveEdit(proceed)` と、`useArticleEditor` の `onBeforeSwitchField(proceed)` に集約。実際の遷移処理を `proceed` コールバックとして受け渡すことで、ガードロジックと遷移処理を疎結合に保つ。
 - 編集中フラグは `isDirtyRef`（`RefObject<boolean>`）で親（`App.tsx`）へ伝搬し、レンダリングを増やさずに最新の dirty 状態を参照できるようにしている。
 
-### 2-5. ページ作成・削除と空状態
+### 2-5. エラーハンドリング設計
+
+#### データ取得エラー（2段階 ErrorBoundary）
+
+`useContentList` / `useContent` は `useSuspenseQuery` を採用しており、ローディング状態は `<Suspense>` フォールバック（スピナー）が、エラー状態は `<ErrorBoundary>` が担う。コンポーネント内に `isLoading` / `isError` のガードを書かず、表示ロジックに集中できる。
+
+| 境界 | 対象 | フォールバック |
+| --- | --- | --- |
+| 外側（`App`）| コンテンツ一覧取得失敗 | 全画面 `ErrorFallback`（再試行ボタン） |
+| 内側（`ContentDetail`）| 単一コンテンツ取得失敗 | コンテンツエリア内のインラインエラー表示 |
+
+再試行ボタンを押すと `resetErrorBoundary()` でバウンダリをリセットし、即座にトーストで「更新しました」を通知する。
+
+#### ミューテーションエラー（トースト通知）
+
+作成・更新の失敗は画面遷移を伴わないため、`useMutation` の `onError` コールバックからトーストを表示する。エラーメッセージは `src/lib/messages.ts` に定数として集約し、散在を防いでいる。
+
+```ts
+// src/lib/messages.ts
+export const MESSAGES = {
+  retry: "更新しました",
+  createError: (detail: string) => `新規作成に失敗しました: ${detail}`,
+  updateError: (detail: string) => `更新に失敗しました: ${detail}`,
+} as const;
+```
+
+### 2-6. ページ作成・削除と空状態
 
 - **新規作成**: `POST /content` 成功後、返却された `id` へ自動遷移（`useCreateContent` の `onSuccess`）。
 - **削除**: 確認モーダルで承認後に `DELETE`。**最後の 1 ページは削除不可**とし、画面が空になるのを防ぐためトーストで通知する。
@@ -233,3 +269,27 @@ Noto Sans JP は CJK グリフを含むため全量は大きいが、Variable Fo
 - Vitest を `jsdom` 環境で実行（`vite.config.ts` の `test` 設定）。
 - グローバル API 有効（`globals: true`）、セットアップは `src/test/setup.ts`。
 - カバレッジは v8 プロバイダ。`src/main.tsx` と型定義ファイルは計測対象外。
+
+#### テスト一覧
+
+| ファイル | 内容 |
+| --- | --- |
+| `schemas/content.test.ts` | バリデーション境界値テスト（タイトル 1・50・51文字、本文 9・10・2000・2001文字、空白 trim 等） |
+| `hooks/useArticleEditor.test.ts` | 編集ロジックのユニットテスト（下表参照） |
+| `components/ui/Input.test.tsx` | Input コンポーネントの描画・イベントテスト |
+| `components/ui/TextArea.test.tsx` | TextArea コンポーネントの描画・イベントテスト |
+
+**`useArticleEditor` テスト詳細**
+
+| グループ | テストケース |
+| --- | --- |
+| `save()` | バリデーション通過時に `onSave` が呼ばれ `editingField` がクリアされる |
+| `save()` | タイトルが空のとき `onSave` が呼ばれずエラーがセットされる |
+| `save()` | 空白のみのタイトルでも `onSave` が呼ばれずエラーがセットされる（trim 検証） |
+| `save()` | 本文が 9 文字のとき `onSave` が呼ばれずエラーがセットされる |
+| `cancel()` | draft・エラー・`editingField` がすべて初期値にリセットされる |
+| `isDirty` | 初期値から変更がないとき `false` |
+| `isDirty` | タイトルを変更したとき `true` |
+| `isDirty` | 変更後に `cancel()` すると `false` に戻る |
+| `startEdit()` | dirty な状態で別フィールドへ切り替えると `onBeforeSwitchField` が呼ばれる |
+| `startEdit()` | dirty でない状態で別フィールドへ切り替えても `onBeforeSwitchField` が呼ばれない |
