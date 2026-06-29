@@ -141,6 +141,9 @@ src/
 │   ├── useContent.ts          React Query による CRUD フック群（useSuspenseQuery）
 │   ├── usePageNavigation.ts   ページ選択・編集状態・遷移ガードの統括
 │   ├── useArticleEditor.ts    タイトル/本文の編集状態・差分(isDirty)管理
+│   ├── useUnsavedGuard.tsx    未保存ガード（isDirtyRef を受け取り確認モーダルを表示）
+│   ├── useDeleteConfirm.tsx   削除確認モーダルの表示ロジック
+│   ├── useSidebarState.ts     サイドバー開閉状態の管理
 │   ├── useModal.ts            ModalContext を参照する consumer フック
 │   └── useToast.ts            ToastContext を参照する consumer フック
 ├── providers/             グローバル状態の Provider
@@ -148,6 +151,8 @@ src/
 │   ├── ModalProvider.tsx      Provider 実体（モーダル描画）
 │   ├── toastContext.ts        Context 定義のみ
 │   └── ToastProvider.tsx      Provider 実体（トースト描画）
+├── types/
+│   └── content.ts         共有型定義（Content / ContentInput / ContentFormErrors）
 ├── schemas/               バリデーションスキーマ
 │   ├── content.ts             Zod スキーマ（タイトル・本文の制約定義）
 │   └── content.test.ts        バリデーションの境界値テスト
@@ -185,7 +190,7 @@ const { open, close } = useModal();
 const { toast } = useToast();
 
 open({ title: "確認", content: <ConfirmDialog ... /> });
-toast({ message: "最後のページは削除できません", type: "error" });
+toast({ message: "更新に失敗しました: Network Error", type: "error" });
 ```
 
 ### 2-4. 編集フローと未保存ガード
@@ -227,8 +232,8 @@ export const MESSAGES = {
 
 ### 2-6. ページ作成・削除と空状態
 
-- **新規作成**: `POST /content` 成功後、返却された `id` へ自動遷移（`useCreateContent` の `onSuccess`）。
-- **削除**: 確認モーダルで承認後に `DELETE`。**最後の 1 ページは削除不可**とし、画面が空になるのを防ぐためトーストで通知する。
+- **新規作成**: `POST /content` 成功後、返却された `id` へ自動遷移（`App.tsx` の `handleAdd` 内 `onSuccess` で `handleSelect(data.id)` を実行）。
+- **削除**: 確認モーダルで承認後に `DELETE`。
 - **空状態**: ページが 0 件でもレイアウトは維持し、コンテンツ領域に「ページがありません」と作成ボタンを表示する。
 
 ---
